@@ -111,15 +111,18 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 ### Version 1
 - Version 1.1 : U-Net2++ baseline
 - Version 1.2
-    - 카테고리별로 train_IoU, train_acc, valid_IoU, valid_acc 기록하도록 수정
-    - 디버깅 모드에서는 모델 저장하지 않도록 수정
-    - 모델 저장 시 saved_dir에 모델 이름으로 하위 디렉터리 만들고, 모델 이름을 사용하여 모델 저장할 수 있도록 수정
-    - 모델 저장 기준을 mIoU만 적용, save_interval 적용하여 n번째 epoch마다 모델 저장하도록 수정
-    - 학습 종료 후 마지막 모델 저장하도록 수정
-    - 디버깅 모드에서 wandb run name 앞에 debug_ 붙여서 관리하기 쉽도록 수정
+	- 카테고리별로 train_IoU, train_acc, valid_IoU, valid_acc 기록하도록 수정
+	- 디버깅 모드에서는 모델 저장하지 않도록 수정
+	- 모델 저장 시 saved_dir에 모델 이름으로 하위 디렉터리 만들고, 모델 이름을 사용하여 모델 저장할 수 있도록 수정
+	- 모델 저장 기준을 mIoU만 적용, save_interval 적용하여 n번째 epoch마다 모델 저장하도록 수정
+	- 학습 종료 후 마지막 모델 저장하도록 수정
+	- 디버깅 모드에서 wandb run name 앞에 debug_ 붙여서 관리하기 쉽도록 수정
 - Version 1.3
-    - wandb에 Module, hyperparameter를 기록하도록 수정
-    - mIoU에 따라 best model을 저장 / save_interval마다 best mIoU를 기록한 epoch의 모델 저장 / 학습 종료 후 마지막 모델 저장하도록 수정
+    	- wandb에 Module, hyperparameter를 기록하도록 수정
+    	- mIoU에 따라 best model을 저장 / save_interval마다 best mIoU를 기록한 epoch의 모델 저장 / 학습 종료 후 마지막 모델 저장하도록 수정
 - Version 1.4
-    - make_save_dir() 함수 추가 - 학습 시작 시 새로운 실험의 checkpoint를 저장하기 위한 디렉터리 생성
-    - 같은 모델과 백본으로 다른 실험을 하는 경우 모델 저장 시 checkpoint가 변경되는 문제가 있어서 실험이 중복되지 않게 새로운 디렉터리에 저장하도록 수정
+	- make_save_dir() 함수 추가 - 학습 시작 시 새로운 실험의 checkpoint를 저장하기 위한 디렉터리 생성
+	- 같은 모델과 백본으로 다른 실험을 하는 경우 모델 저장 시 checkpoint가 변경되는 문제가 있어서 실험이 중복되지 않게 새로운 디렉터리에 저장하도록 수정
+- Version 1.5
+	- get_model_name() 함수 추가 - DeepLab v3+처럼 model에 name attribute가 없는 경우, model.name을 사용하면서 발생한 에러 수정
+	- debugging 모드에서는 모델 생성 / 디렉터리 생성을 하지 않도록 수정
