@@ -35,6 +35,7 @@ mean_acc_cls = np.nanmean(acc_cls)
 # return acc, acc_cls, mean_iu, fwavacc, iu
 return acc, acc_cls, mean_acc_cls, mean_iu, fwavacc, iu
 ```
+<br/>
 
 ### custom.py
 베이스라인에 제공된 CustomDataLoader 클래스와 collate_fn 함수를 포함합니다.
@@ -48,6 +49,7 @@ def __init__(self, annotation, mode = 'train', transform = None):
     self.transform = transform
     self.coco = COCO(os.path.join(self.dataset_path, annotation))
 ```
+<br/>
 
 - mask의 pixel_value를 구하기 위해 불필요하게 category id를 구하는 부분을 수정했습니다.
 ```
@@ -63,6 +65,7 @@ def __getitem__(self, index: int):
 	    masks[self.coco.annToMask(anns[i]) == 1] = pixel_value
 	masks = masks.astype(np.int8)
 ```
+<br/>
 
 - ustomDataLoader 클래스의 이름을 CustomDatset으로 변경했고, 디버깅 모드 사용에 따라 데이터셋을 작게 나눠줄 수 있도록 함수를 추가했습니다.
 입력 ratio에 따라 데이터셋을 해당 비율만큼 나누어 작은 데이터셋을 사용할 수 있습니다.
