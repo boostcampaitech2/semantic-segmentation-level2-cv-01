@@ -47,7 +47,7 @@ def parse_args():
 
     return args
 
-def make_dataloader(mode='train', batch_size=8, shuffle=False, num_workers=4, collate_fn=collate_fn, debug=False):
+def make_dataloader(mode='train', batch_size=8, shuffle=False, num_workers=4, collate_fn=collate_fn, ratio=0.1, debug=False):
     """
     Create dataloader by arguments.
 
@@ -64,6 +64,8 @@ def make_dataloader(mode='train', batch_size=8, shuffle=False, num_workers=4, co
         
         collate_fn (func) : Collate function for Dataset
             (default : collate_fn from custom)
+
+        ratio (float) : Ratio of splited Dataset
         
         debug (bool) : Debugging mode (default : False)
 
@@ -89,15 +91,18 @@ def make_dataloader(mode='train', batch_size=8, shuffle=False, num_workers=4, co
     transforms = {'train':train_transform,
                 'val':val_transform,
                 'test':test_transform}
+    
+    drop_last = mode in ['train', 'val']
 
     dataset = CustomDataset(annotation=annotation[mode], mode=mode, transform=transforms[mode])
     if debug:
-        dataset = dataset.split_dataset(ratio=0.1)
+        dataset = dataset.split_dataset(ratio=ratio)
     loader = DataLoader(dataset=dataset,
                         batch_size=batch_size,
                         shuffle=shuffle,
                         num_workers=num_workers,
-                        collate_fn=collate_fn)
+                        collate_fn=collate_fn,
+                        drop_last=drop_last)
     
     return loader
 
@@ -117,17 +122,22 @@ def set_random_seed(random_seed=21):
     np.random.seed(random_seed)
     random.seed(random_seed)
 
-def get_model_name(model):
+def get_model_name(model, encoder_name):
     """
     Return the name of model.
 
     Args:
         model (obj : smp.model) : Segmentation model
+
+        encoder_name (str) : Encoder name of Segmentation model
     
     Returns:
         model_name (str) : Name of model
     """
-    return model.name if hasattr(model, 'name') else model.__class__.__name__
+
+    model_name = model.name if hasattr(model, 'name') else model.__class__.__name__
+
+    return '-'.join([model_name, encoder_name])
 
 def make_save_dir(saved_dir, debug=False):
     """
@@ -181,7 +191,7 @@ def save_model(model, saved_dir, file_name, debug=False):
     output_path = os.path.join(saved_dir, file_name)
     torch.save(check_point, output_path)
 
-def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, saved_dir, val_every, device, debug):
+def train(num_epochs, model, model_name, train_loader, val_loader, criterion, optimizer, saved_dir, val_every, device, debug):
     """
     Train segmentation model.
 
@@ -299,10 +309,10 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sav
             if best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1}")
                 best_mIoU = val_mIoU
-                save_model(model, saved_dir, file_name=f'{get_model_name(model)}_best.pt', debug=debug)
+                save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % save_interval == 0:
-                    save_model(model, saved_dir, file_name=f'{get_model_name(model)}_{epoch+1}.pt', debug=debug)
-    save_model(model, saved_dir, file_name=f'{get_model_name(model)}_last.pt', debug=debug)
+                    save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
+    save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
     """
@@ -413,12 +423,14 @@ if __name__ == '__main__':
 
     # Define model
     ## TODO
+    encoder_name = 'tu-xception71'
+
     model = smp.DeepLabV3Plus(
-        encoder_name='tu-xception71',
+        encoder_name=encoder_name,
         in_channels=3,
         classes=11
     )
-    model_name = get_model_name(model)
+    model_name = get_model_name(model, encoder_name)
 
     # Hyperparameter 정의
     ## TODO
@@ -443,6 +455,7 @@ if __name__ == '__main__':
                                 shuffle=True,
                                 num_workers=4,
                                 collate_fn=collate_fn,
+                                ratio=0.2,
                                 debug=debug)
 
     val_loader = make_dataloader(mode='val',
@@ -450,6 +463,7 @@ if __name__ == '__main__':
                                 shuffle=False,
                                 num_workers=4,
                                 collate_fn=collate_fn,
+                                ratio=0.2,
                                 debug=debug)
 
     # Loss function 정의
@@ -478,4 +492,4 @@ if __name__ == '__main__':
     wandb.run.save()
 
     # Start training
-    train(num_epochs, model, train_loader, val_loader, criterion, optimizer, saved_dir, val_every, device, debug)
+    train(num_epochs, model, model_name, train_loader, val_loader, criterion, optimizer, saved_dir, val_every, device, debug)
