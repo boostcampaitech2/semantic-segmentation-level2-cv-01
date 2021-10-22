@@ -1,5 +1,6 @@
 # Segmentation Models PyTorch(SMP) Baseline
 SMP library를 이용한 Segmentation Baseline입니다.
+
 https://github.com/qubvel/segmentation_models.pytorch
 
 -------
@@ -15,9 +16,7 @@ python smp_Unet2plus.py --debug --deterministic --private # 중복해서 사용 
 
 # 참고
 모델마다 적용 가능한 backbone, weight 등이 정리되어 있습니다.
-
 https://smp.readthedocs.io/en/latest/encoders.html
-
 Timmm Encoders 탭을 참고하시면 timm 라이브러리의 더 다양한 Backbone을 사용하실 수 있습니다.
 
 -------
