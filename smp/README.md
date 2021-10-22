@@ -126,3 +126,4 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 - Version 1.5
 	- get_model_name() 함수 추가 - DeepLab v3+처럼 model에 name attribute가 없는 경우, model.name을 사용하면서 발생한 에러 수정
 	- debugging 모드에서는 모델 생성 / 디렉터리 생성을 하지 않도록 수정
+	- train / validation data loader 생성 시 drop_last=True로 설정하여 에러 수정
