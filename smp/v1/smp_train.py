@@ -129,7 +129,7 @@ def get_model_name(model):
     """
     return model.name if hasattr(model, 'name') else model.__class__.__name__
 
-def make_save_dir(saved_dir):
+def make_save_dir(saved_dir, debug=False):
     """
     Make Directory to save checkpoints. This function has been added
     to avoid saving different experiments of same models in one directory.
@@ -138,9 +138,14 @@ def make_save_dir(saved_dir):
     Args :
         saved_dir (str) : Path of directory to save checkpoints.
 
+        debug (bool) : Debugging mode (default : False)
+
     Returns :
         saved_dir (str) : New directory path
     """
+
+    if debug:
+        return
 
     while os.path.isdir(saved_dir):
         components = saved_dir.split('_')
@@ -422,7 +427,7 @@ if __name__ == '__main__':
     num_epochs = 50
     learning_rate = 0.0001
     saved_dir = os.path.join('/opt/ml/segmentation/saved', model_name)
-    saved_dir = make_save_dir(saved_dir)
+    saved_dir = make_save_dir(saved_dir, debug)
 
     # wandb
     ## TODO
