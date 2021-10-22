@@ -1,6 +1,5 @@
 # Segmentation Models PyTorch(SMP) Baseline
-SMP library를 이용한 Segmentation Baseline입니다.
-
+SMP library를 이용한 Segmentation Baseline입니다.<br/>
 https://github.com/qubvel/segmentation_models.pytorch
 
 -------
@@ -15,8 +14,8 @@ python smp_Unet2plus.py --debug --deterministic --private # 중복해서 사용 
 ```
 
 # 참고
-모델마다 적용 가능한 backbone, weight 등이 정리되어 있습니다.
-https://smp.readthedocs.io/en/latest/encoders.html
+모델마다 적용 가능한 backbone, weight 등이 정리되어 있습니다.<br/>
+https://smp.readthedocs.io/en/latest/encoders.html<br/>
 Timmm Encoders 탭을 참고하시면 timm 라이브러리의 더 다양한 Backbone을 사용하실 수 있습니다.
 
 -------
@@ -38,7 +37,7 @@ return acc, acc_cls, mean_acc_cls, mean_iu, fwavacc, iu
 ```
 
 ### custom.py
-베이스라인에 제공된 CustomDataLoader 클래스와 collate_fn 함수를 포함합니다. 
+베이스라인에 제공된 CustomDataLoader 클래스와 collate_fn 함수를 포함합니다.
 
 - 모드 별로 데이터셋을 더 간단하게 생성하기 위해 init 함수를 조금 수정했습니다.
 ```
