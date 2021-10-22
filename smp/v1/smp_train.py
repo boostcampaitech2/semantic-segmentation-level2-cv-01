@@ -117,6 +117,18 @@ def set_random_seed(random_seed=21):
     np.random.seed(random_seed)
     random.seed(random_seed)
 
+def get_model_name(model):
+    """
+    Return the name of model.
+
+    Args:
+        model (obj : smp.model) : Segmentation model
+    
+    Returns:
+        model_name (str) : Name of model
+    """
+    return model.name if hasattr(model, 'name') else model.__class__.__name__
+
 def make_save_dir(saved_dir):
     """
     Make Directory to save checkpoints. This function has been added
@@ -157,8 +169,8 @@ def save_model(model, saved_dir, file_name, debug=False):
 
         debug (bool) : Debugging mode (default : False)
     """
-    # if debug:
-    #     return
+    if debug:
+        return
 
     check_point = {'net': model.state_dict()}
     output_path = os.path.join(saved_dir, file_name)
@@ -282,10 +294,10 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sav
             if best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1}")
                 best_mIoU = val_mIoU
-                save_model(model, saved_dir, file_name=f'{model.name}_best.pt', debug=debug)
+                save_model(model, saved_dir, file_name=f'{get_model_name(model)}_best.pt', debug=debug)
                 if (epoch + 1) % save_interval == 0:
-                    save_model(model, saved_dir, file_name=f'{model.name}_{epoch+1}.pt', debug=debug)
-    save_model(model, saved_dir, file_name=f'{model.name}_last.pt', debug=debug)
+                    save_model(model, saved_dir, file_name=f'{get_model_name(model)}_{epoch+1}.pt', debug=debug)
+    save_model(model, saved_dir, file_name=f'{get_model_name(model)}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
     """
@@ -396,19 +408,20 @@ if __name__ == '__main__':
 
     # Define model
     ## TODO
-    model = smp.Linknet(
-        encoder_name='tu-hrnet_w64',
+    model = smp.DeepLabV3Plus(
+        encoder_name='tu-xception71',
         in_channels=3,
         classes=11
     )
+    model_name = get_model_name(model)
 
     # Hyperparameter 정의
     ## TODO
     val_every = 1
-    batch_size = 16   # Mini-batch size
+    batch_size = 8   # Mini-batch size
     num_epochs = 50
     learning_rate = 0.0001
-    saved_dir = os.path.join('/opt/ml/segmentation/saved', model.name)
+    saved_dir = os.path.join('/opt/ml/segmentation/saved', model_name)
     saved_dir = make_save_dir(saved_dir)
 
     # wandb
@@ -452,7 +465,8 @@ if __name__ == '__main__':
     }
 
     wandb.init(project='smp', entity=entity_name, config=wandb_config)
-    run_name = model.name
+
+    run_name = model_name
     if debug:
         run_name = 'debug_' + run_name        
     wandb.run.name = run_name
