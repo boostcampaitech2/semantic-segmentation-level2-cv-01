@@ -426,7 +426,7 @@ if __name__ == '__main__':
 
     # Define model
     ## TODO
-    encoder_name = 'tu-xception71'
+    encoder_name = 'tu-xception65'
 
     model = smp.DeepLabV3Plus(
         encoder_name=encoder_name,
