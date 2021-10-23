@@ -128,3 +128,4 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 	- debugging 모드에서는 모델 생성 / 디렉터리 생성을 하지 않도록 수정
 	- train / validation data loader 생성 시 drop_last=True로 설정하여 에러 수정
 	- wandb와 모델 저장 디렉터리에 backbone 이름이 추가되지 않는 문제 수정 (임시 수정)
+	- wandb의 epoch section에 best_epoch을 기록할 수 있도록 수정
