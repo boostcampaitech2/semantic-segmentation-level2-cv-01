@@ -218,6 +218,7 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
     n_class = 11
     best_loss = 9999999
     best_mIoU = -1
+    best_epoch = 0
     cats = ['Backgroud',
             'General trash',
             'Paper',
@@ -309,9 +310,11 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             if best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1}")
                 best_mIoU = val_mIoU
+                best_epoch = epoch + 1
                 save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
+        wandb.log({'epoch/best_epoch':best_epoch}, step=(epoch+1))
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
