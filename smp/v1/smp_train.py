@@ -192,7 +192,7 @@ def save_model(model, saved_dir, file_name, debug=False):
     output_path = os.path.join(saved_dir, file_name)
     torch.save(check_point, output_path)
 
-def log_lr(lr_list, step_list, num_epochs):
+def log_lr(lr_list):
     """
     Log learning rate plot to wandb.
 
@@ -200,9 +200,8 @@ def log_lr(lr_list, step_list, num_epochs):
         lr_list (list) : List of learning rates and steps in unit of epoch
             e.g. [[lr_1, setp_1], [lr_2, setp_2], ..., [lr_last, setp_last]]
     """
-
-    # table = wandb.Table(data=lr_list, columns=['Epoch', 'Learning rate', 'Run_id'])
-    # wandb.log({'test/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate')})
+    table = wandb.Table(data=lr_list, columns=['Epoch', 'Learning rate'])
+    wandb.log({'test/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate')})
 
 def train(num_epochs, model, model_name, train_loader, val_loader, criterion, optimizer, scheduler, saved_dir, val_every, device, debug):
     """
@@ -234,7 +233,6 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
     best_epoch = 0
     steps = 0
     lr_list = []
-    step_list = []
     cats = ['Backgroud',
             'General trash',
             'Paper',
@@ -292,8 +290,7 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             mean_fwavacc += fwavacc
             mean_IoU += np.array(IoU)
             steps += 1
-            lr_list.append(scheduler.get_last_lr()[0])
-            step_list.append(steps/len(train_loader))
+            lr_list.append([steps/len(train_loader), scheduler.get_last_lr()[0]])
             
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
@@ -335,7 +332,7 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
                 if (epoch + 1) % save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
         wandb.log({'epoch/best_epoch':best_epoch}, step=(epoch+1))
-    # log_lr(lr_list, step_list)
+    # log_lr(lr_list)
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
@@ -460,7 +457,7 @@ if __name__ == '__main__':
     ## TODO
     val_every = 1
     batch_size = 8   # Mini-batch size
-    num_epochs = 30
+    num_epochs = 10
     learning_rate = 0.0001
     saved_dir = os.path.join('/opt/ml/segmentation/saved', model_name)
     saved_dir = make_save_dir(saved_dir, debug)
@@ -500,7 +497,7 @@ if __name__ == '__main__':
 
     # Scheduler 정의
     ## TODO
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*5)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*num_epochs/5)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=len(train_loader)*5, gamma=0.8)
 
     wandb_config = {
