@@ -129,3 +129,7 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 	- train / validation data loader 생성 시 drop_last=True로 설정하여 에러 수정
 	- wandb와 모델 저장 디렉터리에 backbone 이름이 추가되지 않는 문제 수정 (임시 수정)
 	- wandb의 epoch section에 best_epoch을 기록할 수 있도록 수정
+- Version 1.6
+	- log_lr() 함수 추가 - optimizer의 learning rate를 그래프로 시각화
+	- make_wandb_images() 함수 추가 - wandb에 prediction 결과를 시각화한 이미지 저장
+	- tqdm 구현 추가
