@@ -5,6 +5,8 @@ import torch
 import os
 import torch.nn as nn
 import wandb
+import time
+from tqdm import tqdm
 
 import segmentation_models_pytorch as smp
 from torch.utils.data import DataLoader
@@ -201,7 +203,42 @@ def log_lr(lr_list):
             e.g. [[lr_1, setp_1], [lr_2, setp_2], ..., [lr_last, setp_last]]
     """
     table = wandb.Table(data=lr_list, columns=['Epoch', 'Learning rate'])
-    wandb.log({'test/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate')})
+    wandb.log({'optimizer/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate', title="optimizer/learning_rate")})
+
+def make_wandb_images(images, outputs, masks, class_dict):
+    """
+    Log prediction result to wandb
+
+    Args:
+        images (obj : numpy array or tensor) : Original images
+
+        outputs (obj : numpy array or tensor) : Model outputs (prediction results)
+
+        masks (obj : numpy array or tensor) : Ground Truth
+
+        class_dict (dict) : Class labels
+            (keys: pixel values, values: string labels)
+
+    Returns:
+        result (obj : wandb image object) : Masked Images with ground truth
+    """
+
+    result = []
+            
+    for image, output, mask in zip(images, outputs, masks):
+        result.append(wandb.Image(image, masks={
+            "predictions" : {
+                "mask_data" : output,
+                "class_labels" : class_dict
+                },
+                "ground_truth" : {
+                "mask_data" : mask,
+                "class_labels" : class_dict
+                }
+            }
+        ))
+    
+    return result
 
 def train(num_epochs, model, model_name, train_loader, val_loader, criterion, optimizer, scheduler, saved_dir, val_every, device, debug):
     """
@@ -245,7 +282,13 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             'Battery',
             'Clothing']
     
-    for epoch in range(num_epochs):
+    epoch_pbar = tqdm(range(num_epochs),
+                        total=num_epochs,
+                        ncols=100,
+                        position=1,
+                        leave=True)
+
+    for epoch in epoch_pbar:
         model.train()
         mean_acc = 0
         mean_acc_each_cls = np.zeros(n_class)
@@ -256,7 +299,13 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
         mean_IoU = np.zeros(n_class)
 
         hist = np.zeros((n_class, n_class))
-        for step, (images, masks, _) in enumerate(train_loader):
+        train_pbar = tqdm(enumerate(train_loader),
+                            total=len(train_loader),
+                            ncols=50,
+                            position=0,
+                            leave=False)
+
+        for step, (images, masks, _) in train_pbar:
             images = torch.stack(images)       
             masks = torch.stack(masks).long() 
             
@@ -294,8 +343,11 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
-                print(f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(train_loader)}], \
-                        Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
+                desc_str = [f'Epoch [{epoch+1:2d}/{num_epochs:2d}]',
+                            f'Step [{step+1:4d}/{len(train_loader):4d}]',
+                            f'Loss: {round(loss.item(),4):7.4f}',
+                            f'mIoU: {round(mIoU,4):7.4f}']
+                print(desc_str)
         
         # calculate metric
         mean_acc /= len(train_loader)
@@ -325,14 +377,14 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             avrg_loss, val_mIoU = validation(epoch + 1, model, val_loader, criterion, device)
             # if avrg_loss < best_loss and best_mIoU < val_mIoU:
             if best_mIoU < val_mIoU: 
-                print(f"Best Performance at epoch: {epoch + 1}")
+                print(f"Best Performance at epoch: {epoch + 1:2d}")
                 best_mIoU = val_mIoU
                 best_epoch = epoch + 1
                 save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
         wandb.log({'epoch/best_epoch':best_epoch}, step=(epoch+1))
-    # log_lr(lr_list)
+    log_lr(lr_list)
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
@@ -355,7 +407,7 @@ def validation(epoch, model, data_loader, criterion, device):
         
         mIoU (float) : mean IoU of validation for every class
     """
-    print(f'Start validation #{epoch}')
+    print(f'Start validation #{epoch:2d}')
     model.eval()
     cats = ['Backgroud',
             'General trash',
@@ -369,13 +421,22 @@ def validation(epoch, model, data_loader, criterion, device):
             'Battery',
             'Clothing']
 
+    class_dict = {idx:label for idx, label in enumerate(cats)}
+
     with torch.no_grad():
         n_class = 11
         total_loss = 0
-        cnt = 0
-        
+        cnt = 0        
         hist = np.zeros((n_class, n_class))
-        for step, (images, masks, _) in enumerate(data_loader):
+        result_images = []
+
+        valid_pbar = tqdm(enumerate(data_loader),
+                            total=len(data_loader),
+                            ncols=50,
+                            position=0,
+                            leave=False)
+
+        for step, (images, masks, _) in valid_pbar:
             
             images = torch.stack(images)       
             masks = torch.stack(masks).long()  
@@ -394,6 +455,7 @@ def validation(epoch, model, data_loader, criterion, device):
             masks = masks.detach().cpu().numpy()
             
             hist = add_hist(hist, masks, outputs, n_class=n_class)
+            result_images += make_wandb_images(images, outputs, masks, class_dict)
         
         acc, acc_cls, mean_acc_cls, mIoU, fwavacc, IoU = label_accuracy_score(hist)
         IoU_by_class = [{classes : round(IoU,4)} for IoU, classes in zip(IoU , cats)]
@@ -410,8 +472,9 @@ def validation(epoch, model, data_loader, criterion, device):
             log_dict[f'{cats[i]}/valid_IoU'] = IoU[i]
         
         wandb.log(log_dict, step=epoch)
+        wandb.log({"validation":result_images}, step=epoch)
 
-        print(f'Validation #{epoch}  Average Loss: {round(avrg_loss.item(), 4)}, Accuracy : {round(acc, 4)}, \
+        print(f'Validation #{epoch:2d}  Average Loss: {round(avrg_loss.item(), 4):7.4f}, Accuracy : {round(acc, 4):7.4f}, \
                 mIoU: {round(mIoU, 4)}')
         print(f'IoU by class : {IoU_by_class}')
         
