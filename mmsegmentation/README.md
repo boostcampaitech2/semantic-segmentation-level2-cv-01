@@ -83,3 +83,5 @@ lr_config = dict(
 )
 ```
 로 하시면 scheduler 없이 실험하실 수 있습니다.
+
+추가적으로, mmsegmentation의 tools/train.py에 들어가서 argparser의 --deterministic의 default를 True, --seed의 default를 2021로 설정해주시면 seed 고정을 할 수 있습니다!
