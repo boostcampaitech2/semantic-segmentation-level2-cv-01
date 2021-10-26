@@ -522,7 +522,7 @@ if __name__ == '__main__':
 
     # Define model
     ## TODO
-    encoder_name = 'tu-xception41'
+    encoder_name = 'resnet50'
 
     model = smp.DeepLabV3Plus(
         encoder_name=encoder_name,
@@ -535,7 +535,7 @@ if __name__ == '__main__':
     ## TODO
     val_every = 1
     batch_size = 8   # Mini-batch size
-    num_epochs = 10
+    num_epochs = 50
     learning_rate = 0.0001
     saved_dir = os.path.join('/opt/ml/segmentation/saved', model_name)
     saved_dir = make_save_dir(saved_dir, debug)
@@ -587,7 +587,7 @@ if __name__ == '__main__':
         'learning_rate': learning_rate
     }
 
-    wandb.init(project='smp', entity=entity_name, config=wandb_config)
+    wandb.init(project='AugTeam_NA', entity=entity_name, config=wandb_config)
 
     run_name = model_name
     if debug:
