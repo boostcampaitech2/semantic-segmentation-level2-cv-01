@@ -217,6 +217,8 @@ def log_lr(lr_list):
         lr_list (list) : List of learning rates and steps in unit of epoch
             e.g. [[lr_1, setp_1], [lr_2, setp_2], ..., [lr_last, setp_last]]
     """
+    if not lr_list:
+        return
     table = wandb.Table(data=lr_list, columns=['Epoch', 'Learning rate'])
     wandb.log({'optimizer/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate', title="optimizer/learning_rate")})
 
@@ -338,7 +340,8 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            # scheduler.step()
+            if scheduler:
+                scheduler.step()
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
             masks = masks.detach().cpu().numpy()
@@ -354,7 +357,8 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
             mean_fwavacc += fwavacc
             mean_IoU += np.array(IoU)
             steps += 1
-            # lr_list.append([steps/len(train_loader), scheduler.get_last_lr()[0]])
+            if scheduler:
+                lr_list.append([steps/len(train_loader), scheduler.get_last_lr()[0]])
             
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
@@ -399,7 +403,7 @@ def train(num_epochs, model, model_name, train_loader, val_loader, criterion, op
                 if (epoch + 1) % save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
         wandb.log({'epoch/best_epoch':best_epoch}, step=(epoch+1))
-    # log_lr(lr_list)
+    log_lr(lr_list)
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, data_loader, criterion, device):
@@ -575,8 +579,7 @@ if __name__ == '__main__':
 
     # Scheduler 정의
     ## TODO
-    scheduler = None
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*num_epochs/5)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*num_epochs/5)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=len(train_loader)*5, gamma=0.8)
 
     wandb_config = {
