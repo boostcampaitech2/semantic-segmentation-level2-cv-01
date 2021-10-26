@@ -79,7 +79,22 @@ def make_dataloader(mode='train', batch_size=8, shuffle=False, num_workers=4, co
                 'val':'val.json',
                 'test':'test.json'}
 
+    defualt_transforms = A.Compose([
+                            A.HorizontalFlip(p=0.5),
+                            A.VerticalFlip(p=0.5),
+                            A.RandomRotate90(p=0.5),
+                            A.GridDropout (ratio=0.3, holes_number_x=5, holes_number_y=5,
+                                            shift_x=100, shift_y=100, random_offset=True,
+                                            fill_value=0, always_apply=False, p=0.5),
+                            A.RandomBrightnessContrast(brightness_limit=0.2,
+                                                        contrast_limit=0.2,
+                                                        brightness_by_max=False,
+                                                        always_apply=False, p=0.5),
+                            A.Normalize(mean=(123.675, 116.28, 103.53), std=(58.395, 57.12, 57.375))
+                            ])
+
     train_transform = A.Compose([
+                            defualt_transforms,
                             ToTensorV2()
                             ])
 
