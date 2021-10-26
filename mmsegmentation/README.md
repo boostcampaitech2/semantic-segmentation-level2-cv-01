@@ -75,3 +75,11 @@ project의 이름을 수정하여 원하시는 project 이름을 설정할 수 �
 ### Scheduler
 
 schedule_SGD.py에서 runtime을 수정할 수 있습니다.
+lr_config를 
+
+```python
+lr_config = dict(
+    policy='fixed',
+)
+```
+로 하시면 scheduler 없이 실험하실 수 있습니다.
