@@ -48,6 +48,9 @@ def log_lr(lr_list):
     table = wandb.Table(data=lr_list, columns=['Epoch', 'Learning rate'])
     wandb.log({'optimizer/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate', title="optimizer/learning_rate")})
 
+def log_epoch_wandb(metrics, epoch):
+    wandb.log({'epoch/best_epoch':metrics.best_epoch}, step=epoch+1)
+
 def log_train_wandb(metrics, epoch):
     log_dict = {'train/acc': metrics.mean_acc,
         'train/cls_acc': metrics.mean_mean_acc_cls,
@@ -70,8 +73,7 @@ def log_valid_wandb(metrics, result_images, epoch):
         'valid/cls_acc': mean_acc_cls,
         'valid/mIoU': mIoU,
         'valid/loss': metrics.mean_loss,
-        'valid/fwavacc': fwavacc,
-        'epoch/best_epoch':metrics.best_epoch}
+        'valid/fwavacc': fwavacc}
 
     for i in range(metrics.n_class):
         log_dict[f'{metrics.classes[i]}/valid_acc'] = acc_cls[i]

@@ -4,7 +4,7 @@ from tqdm import tqdm
 from init_api import set_exp_name
 from model_api import build_module, save_model
 from metric_api import Metrics
-from wandb_api import log_lr, make_wandb_images, log_train_wandb, log_valid_wandb
+from wandb_api import log_lr, make_wandb_images, log_train_wandb, log_valid_wandb, log_epoch_wandb
 
 def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
     """
@@ -108,11 +108,11 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
             if metrics.best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1:2d}")
                 metrics.best_mIoU = val_mIoU
-                metrics.bset_epoch = epoch + 1
+                metrics.best_epoch = epoch + 1
                 save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % cfg.save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
-
+        log_epoch_wandb(metrics, epoch)
     log_lr(lr_list)
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
