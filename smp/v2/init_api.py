@@ -88,6 +88,7 @@ def init_wandb(cfg, private=False, debug=False):
         scheduler = cfg.scheduler
 
     wandb_cfg = dict(
+        exp_num = cfg.exp_num,
         model = cfg.model,
         val_every = cfg.val_every,
         batch_size = cfg.batch_size,
