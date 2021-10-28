@@ -211,3 +211,5 @@ mean_acc, 클래스 별 [acc, IoU], mIoU, mean_loss, mean_fwavacc 등을 계산�
 ## Version
 ### Version 2.1
  - config 파일로 pipeline을 구축할 수 있도록 개선
+ - configs 폴더 안에 config 파일 따로 관리해서 실행 가능하도록 수정
+ - best epoch 기록하지 않는 문제 수정
