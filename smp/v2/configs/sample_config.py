@@ -113,7 +113,7 @@ wandb = dict(
     entity = 'bagineer',
     team_entity = 'perforated_line',
     project = 'AugTeam_NA',
-    # run_name = 'optional',
+    run_name = 'test_name',
     wandb_config = dict(
         val_every = val_every,
         batch_size = batch_size,
@@ -123,10 +123,3 @@ wandb = dict(
         learning_rate = learning_rate
     )
 )
-
-aug_test = dict(
-    type='HorizontalFlip',
-    args=dict(
-        always_apply=False,
-        p=0.5)
-    )
