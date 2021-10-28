@@ -135,6 +135,10 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 	- tqdm 구현 추가
 	- default augmentation 추가
 
+### Version 2
+- Version 2.1
+	- '.py' 확장자의 config 파일을 이용하여 파이프라인을 구축할 수 있도록 수정했습니다. 많관부!!!
+
 <br/><br/>
 ## smp augmentation
 ### Version 1
