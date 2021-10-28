@@ -1,5 +1,12 @@
 # SMP Baseline Version 2
 ## Usage
+### Settings
+```
+!pip install easydict
+!pip insatll tqdm
+```
+
+### Execute
 ```
 python train.py ${your_config_file.py} --deterministic --private --debug
 ```
