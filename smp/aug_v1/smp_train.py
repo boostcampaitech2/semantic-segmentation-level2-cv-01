@@ -579,7 +579,8 @@ if __name__ == '__main__':
 
     # Scheduler 정의
     ## TODO
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*num_epochs/5)
+    scheduler = None
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_loader)*num_epochs/5)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=len(train_loader)*5, gamma=0.8)
 
     wandb_config = {
