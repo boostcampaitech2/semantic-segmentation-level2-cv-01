@@ -1,9 +1,11 @@
 val_every = 1
 save_interval = 3
 batch_size = 8   # Mini-batch size
-num_epochs = 30
+num_epochs = 50
 learning_rate = 0.0001
 exp_num = 12
+
+TRAIN_LEN = 2617
 
 classes = ['Backgroud', 'General trash', 'Paper', 'Paper pack', 'Metal',
     'Glass', 'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
@@ -116,7 +118,7 @@ optimizer = dict(
 scheduler = dict(
     type='CosineAnnealingLR',
     args=dict(
-        T_max=300
+        T_max=(TRAIN_LEN // batch_size) * num_epochs // 5
     )
 )
 
