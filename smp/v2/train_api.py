@@ -107,8 +107,10 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
             # if avrg_loss < best_loss and best_mIoU < val_mIoU:
             if metrics.best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1:2d}")
+                print(f"### Before : <<< {metrics.best_mIoU}, {metrics.best_epoch} >>>")
                 metrics.best_mIoU = val_mIoU
                 metrics.best_epoch = epoch + 1
+                print(f"### After : <<< {metrics.best_mIoU}, {metrics.best_epoch} >>>")
                 save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % cfg.save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
