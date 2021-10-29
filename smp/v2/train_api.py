@@ -113,7 +113,7 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
                 if (epoch + 1) % cfg.save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
         log_epoch_wandb(metrics, epoch)
-    log_lr(lr_list)
+        log_lr(lr_list)
     save_model(model, saved_dir, file_name=f'{model_name}_last.pt', debug=debug)
 
 def validation(epoch, model, valid_loader, criterion, device, cfg):
