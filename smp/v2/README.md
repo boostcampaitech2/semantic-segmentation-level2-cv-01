@@ -215,4 +215,4 @@ mean_acc, 클래스 별 [acc, IoU], mIoU, mean_loss, mean_fwavacc 등을 계산�
  - ~~best epoch 기록하지 않는 문제 수정~~
  - learning rate을 epoch마다 기록하도록 수정
  - config 파일에 train set 길이 추가해서 scheduler 주기 조정
- - best_epoch을 제대로 기록하지 않는 문제
+ - best_epoch을 제대로 기록하지 않는 문제 수정

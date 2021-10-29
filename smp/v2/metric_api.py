@@ -91,3 +91,13 @@ class Metrics:
         self.mean_loss /= self.len_loader
         self.mean_fwavacc /= self.len_loader
         self.mean_IoU /= self.len_loader
+
+    def init_metrics(self):
+        self.mean_acc = 0
+        self.mean_acc_each_cls = np.zeros(self.n_class)
+        self.mean_mean_acc_cls = 0
+        self.mean_mIoU = 0
+        self.mean_loss = 0
+        self.mean_fwavacc = 0
+        self.mean_IoU = np.zeros(self.n_class)
+        self.hist = np.zeros((self.n_class, self.n_class))

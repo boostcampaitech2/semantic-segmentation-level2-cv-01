@@ -41,6 +41,7 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
     best_loss = 9999999
     steps = 0
     lr_list = []
+    metrics = Metrics(cfg.classes, len(train_loader))
     
     epoch_pbar = tqdm(range(cfg.num_epochs),
                         total=cfg.num_epochs,
@@ -50,7 +51,7 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
 
     for epoch in epoch_pbar:
         model.train()
-        metrics = Metrics(cfg.classes, len(train_loader))
+        metrics.init_metrics()
 
         train_pbar = tqdm(enumerate(train_loader),
                             total=len(train_loader),
@@ -107,10 +108,8 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
             # if avrg_loss < best_loss and best_mIoU < val_mIoU:
             if metrics.best_mIoU < val_mIoU: 
                 print(f"Best Performance at epoch: {epoch + 1:2d}")
-                print(f"### Before : <<< {metrics.best_mIoU}, {metrics.best_epoch} >>>")
                 metrics.best_mIoU = val_mIoU
                 metrics.best_epoch = epoch + 1
-                print(f"### After : <<< {metrics.best_mIoU}, {metrics.best_epoch} >>>")
                 save_model(model, saved_dir, file_name=f'{model_name}_best.pt', debug=debug)
                 if (epoch + 1) % cfg.save_interval == 0:
                     save_model(model, saved_dir, file_name=f'{model_name}_{epoch+1}.pt', debug=debug)
