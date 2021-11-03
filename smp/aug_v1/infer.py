@@ -227,6 +227,8 @@ if __name__=='__main__':
     model = model.to(device)
 
     file_names, preds = test(model, test_loader, device)
+    
+    submission = pd.read_csv('/opt/ml/segmentation/baseline_code/submission/sample_submission.csv', index_col=None)
     for file_name, string in zip(file_names, preds):
         submission = submission.append({"image_id" : file_name, "PredictionString" : ' '.join(str(e) for e in string.tolist())}, 
                                     ignore_index=True)
