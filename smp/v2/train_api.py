@@ -11,23 +11,17 @@ def train_model(model, train_loader, valid_loader, saved_dir, cfg, debug=False):
     Train segmentation model.
 
     Args:
-        num_epochs (int) : Number of Epochs
-
         model (obj : torch.nn.Module) : Model to train
 
         train_loader (obj : DataLoader) : Loader for model train
 
-        val_loader (obj : DataLoader) : Loader for model validation
-
-        criterion (obj : torch.nn.Loss) : Loss function
-
-        optimizer (obj : torch.optim.Optimizer) : Optimizer
+        valis_loader (obj : DataLoader) : Loader for model validation
 
         saved_dir (str) : Directory path where to save model
+        
+        cfg: Config for training.
 
-        val_every (int) : Validation interval
-
-        device (str) : Processor ('cuda' or 'cpu')
+        debug (bool): Debugging mode (default : False)
     """
 
     print('Start Training..')
@@ -126,14 +120,16 @@ def validation(epoch, model, valid_loader, criterion, device, cfg):
 
         model (obj : torch.nn.Module) : Model to validate
 
-        data_loader (obj : DataLoader) : Loader for model validation
+        valid_loader (obj : DataLoader) : Loader for model validation
 
         criterion (obj : torch.nn.Loss) : Loss function
 
         device (str) : Processor ('cuda' or 'cpu')
 
+        cfg: Config for training.
+
     Returns:
-        avrg_loss (float) : Average Loss of validation
+        mean_loss (float) : Average Loss of validation
         
         mIoU (float) : mean IoU of validation for every class
     """
