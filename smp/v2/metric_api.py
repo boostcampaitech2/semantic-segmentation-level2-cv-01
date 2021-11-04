@@ -3,6 +3,9 @@
 import numpy as np
 
 class Metrics:
+    """
+    This is a Class for calculating metrics.
+    """
 
     def __init__(self, classes, len_loader):
         self.classes = {idx:label for idx, label in enumerate(classes)}
@@ -64,13 +67,28 @@ class Metrics:
         return hist
 
     def accumulate_loss(self, loss):
+        """
+        Accumulated loss.
+        
+        Args:
+            loss (obj : tensor): Loss from loss function.
+        """
         self.loss = loss.item()
         self.mean_loss += loss.item()
 
     def update_loss(self):
+        """
+        Calculate mean loss.
+        """
         self.mean_loss /= self.len_loader
 
     def accumulate(self, loss):
+        """
+        Accumulated metrics.
+        
+        Args:
+            loss (obj : tensor): Loss from loss function.
+        """
         acc, acc_cls, mean_acc_cls, mIoU, fwavacc, IoU = self.label_accuracy_score()
         self.mIoU = mIoU
         self.loss = loss.item()
@@ -84,6 +102,9 @@ class Metrics:
         self.mean_IoU += np.array(IoU)
 
     def update(self):
+        """
+        Calculate mean metrics.
+        """
         self.mean_acc /= self.len_loader
         self.mean_acc_each_cls /= self.len_loader
         self.mean_mean_acc_cls /= self.len_loader
@@ -93,6 +114,9 @@ class Metrics:
         self.mean_IoU /= self.len_loader
 
     def init_metrics(self):
+        """
+        Initialize metrics to zero.
+        """
         self.mean_acc = 0
         self.mean_acc_each_cls = np.zeros(self.n_class)
         self.mean_mean_acc_cls = 0
