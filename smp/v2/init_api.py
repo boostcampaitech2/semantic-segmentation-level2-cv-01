@@ -13,7 +13,7 @@ def make_save_dir(cfg, debug=False):
     So you can prevent some of checkpoints from being changed.
 
     Args :
-        saved_dir (str) : Path of directory to save checkpoints.
+        cfg (str) : Config for path of directory to save checkpoints.
 
         debug (bool) : Debugging mode (default : False)
 
@@ -64,6 +64,18 @@ def set_random_seed(random_seed=21):
     random.seed(random_seed)
 
 def set_exp_name(cfg, debug):
+    """
+    Set the name of an experiment.
+
+    Args:
+        cfg : Config for training.
+
+        debug (bool): Debugging mode (default : False)
+
+    Returns:
+        exp_name (str): Name of the experiment.
+
+    """
     pre_fix = ""
     exp_str = 'exp' + str(cfg.exp_num)
     if debug:
@@ -76,6 +88,17 @@ def set_exp_name(cfg, debug):
     return exp_name
 
 def init_wandb(cfg, private=False, debug=False):
+    """
+    Initialize wandb run.
+
+    Args:
+        cfg : Config for tarining.
+
+        private (bool): Private mode for logging data to private wandb project.
+            (default : False)
+
+        debug (bool): Debugging mode (default : False)
+    """
 
     if private:
         entity = cfg.wandb.entity
