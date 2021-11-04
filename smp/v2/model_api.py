@@ -3,6 +3,15 @@ import torch
 import segmentation_models_pytorch as smp
 
 def build_model(cfg_model):
+    """
+    Build model by config.
+
+    Args:
+        cfg_model (obj): Model config.
+
+    Returns:
+        model (obj): Created model.
+    """
     if hasattr(smp, cfg_model.type):
         _model = getattr(smp, cfg_model.type)
     else:
@@ -11,6 +20,19 @@ def build_model(cfg_model):
     return model
     
 def build_module(parent_module, cfg_module, has_attr, **kwargs):
+    """
+    Build module by config.
+
+    Args:
+        parent_module (obj): Upper Module of the module to build.
+        
+        cfg_module (obj): Module config.
+
+        has_attr (bool): If config has module attribute.
+
+    Returns:
+        module (obj): Created module.
+    """
     if not has_attr:
         return None
     if hasattr(parent_module, cfg_module.type):
