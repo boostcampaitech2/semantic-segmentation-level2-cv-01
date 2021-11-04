@@ -49,9 +49,26 @@ def log_lr(lr_list):
     wandb.log({'optimizer/lr' : wandb.plot.line(table, 'Epoch', 'Learning rate', title="optimizer/learning_rate")})
 
 def log_epoch_wandb(metrics, epoch):
+    """
+    Log Best epoch plot to wandb.
+
+    Args:
+        metrics (obj): Metric object for best epoch.
+
+        epoch (int): Current epoch.
+    """
     wandb.log({'epoch/best_epoch':metrics.best_epoch}, step=epoch+1)
 
 def log_train_wandb(metrics, epoch):
+    """
+    Log train metrics plot to wandb.
+
+    Args:
+        metrics (obj): Metric object for training result.
+
+        epoch (int): Current epoch.
+    """
+
     log_dict = {'train/acc': metrics.mean_acc,
         'train/cls_acc': metrics.mean_mean_acc_cls,
         'train/mIoU': metrics.mean_mIoU,
@@ -65,6 +82,17 @@ def log_train_wandb(metrics, epoch):
     wandb.log(log_dict, step=epoch+1)
 
 def log_valid_wandb(metrics, result_images, epoch):
+    """
+    Log validation metrics plot to wandb.
+
+    Args:
+        metrics (obj): Metric object for training result.
+
+        result_images (obj): Result images of valiation.
+            (original image, predicted mask, original mask)
+
+        epoch (int): Current epoch.
+    """
 
     acc, acc_cls, mean_acc_cls, mIoU, fwavacc, IoU = metrics.label_accuracy_score()
     IoU_by_class = [{cls : round(IoU,4)} for IoU, cls in zip(IoU , metrics.classes)]
