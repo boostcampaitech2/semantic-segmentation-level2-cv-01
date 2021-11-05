@@ -109,7 +109,7 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 ### infer.py
 제출용 csv 파일을 만들기 위한 스크립트 파일입니다.
 
-python infer.py --tta --softvoting --model 모델이름 --backbone 백본이름
+python infer.py --tta --softvoting --model 모델이름 --backbone 백본이름<br/>
 --tta : tta를 포함한 inference를 실행합니다.<br/>
 --softvoting : softvoting을 위한 npy file을 생성합니다. <br/>
 모델이름 : deeplab, u_net, pa_net<br/>
