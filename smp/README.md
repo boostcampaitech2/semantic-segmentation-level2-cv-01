@@ -109,10 +109,11 @@ inference도 나중에 스크립트로 바꿔서 터미널에서 실행할 수 �
 ### infer.py
 제출용 csv 파일을 만들기 위한 스크립트 파일입니다.
 
-python infer.py --tta --model 모델이름 --backbone 백본이름
-으로 사용하실 수 있고 --tta를 사용하지 않으시면 tta가 없는 inference가 실행됩니다.
-모델이름 : deeplab, u_net, pa_net
-백본이름 : resnet50, resnet101, efficient_b3, efficient_b4, efficient_b5, efficient_b6, efficient_b7
+python infer.py --tta --softvoting --model 모델이름 --backbone 백본이름
+--tta : tta를 포함한 inference를 실행합니다.<br/>
+--softvoting : softvoting을 위한 npy file을 생성합니다. <br/>
+모델이름 : deeplab, u_net, pa_net<br/>
+백본이름 : resnet50, resnet101, efficientnet-b3, efficientnet-b4, efficientnet-b5, efficientnet-b6
 
 -------------
 # Version
