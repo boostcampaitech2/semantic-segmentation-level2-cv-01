@@ -1,8 +1,11 @@
 ## 사용법
 파일 안의 TODO 표시된 부분을 사용하시는 환경에 맞게 수정한 후 실행하시면 됩니다.
-
+<br />
+<br />
 
 ### TODO List
+<br />
+
 ```
 # TODO
 # SMP 모델 지정
@@ -28,3 +31,14 @@ pseudo_labeling_name = 'pseudo_labeling_test'
 ```
 - pseudo labeling의 이름을 정해줍니다.  이는 나중에 mmsegmentation dataset의 디렉토리 이름으로도 사용됩니다.
 
+
+<br />
+
+## 동작 방식
+
+이미 학습된 모델을 불러와 test data에 대해 inference한 뒤
+기존에 있던 train.json COCO format 파일에 pseudo labeling한 데이터를 추가한 새로운 json 파일을 만드는 방식입니다.<br />
+
+pseudo labeling의 threshold는 분포를 보고 임의로 정했습니다.  기준은 픽셀마다 점수의 평균입니다.<br />
+
+MMSegmentation 모델 버전도 만들었지만 모델의 예측 결과물이 중간에 점수를 알 수 없고 바로 분류 결과만 나와버려 threshold를 적용할 수 없어 폐기했습니다.
