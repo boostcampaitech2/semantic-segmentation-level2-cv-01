@@ -1,0 +1,15 @@
+program: train.py
+method: grid
+metric:
+  goal: maximize
+  name: best_mIoU
+name: test
+parameters:
+  optimizer:
+    values: ["Adam","AdamW","RMSprop","SGD"]
+  scheduler:
+    values : ["CosineLearningLR","ReduceLROnPlateau"]
+  learning_rate:
+    values: [0.0001,0.0005,0.00001]
+  config:
+    value: '/opt/ml/semantic-segmentation-level2-cv-01/smp/v2/configs/config.py'
