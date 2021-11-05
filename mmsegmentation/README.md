@@ -2,17 +2,27 @@
  
 MMSegmentation 환경 구축 후 실행 가능합니다.
 
-## Training
+## Configs
 
-    $ python tools/train.py ./deeplab3plus/deeplabv3plus_r50.py
+### Training
 
-## Inference
+    $ python tools/train.py ./configs/ocrnet_hr48/ocrnet_hr48.py
 
-    $ python inference.py <config 경로> <checkpoint 경로>
+### Inference
 
-## Baseline Code
+대회에 알맞는 형식의 csv파일을 생성할 수 있습니다.
 
-### Dataset
+    $ python inference.py ./configs/ocrnet_hr48/ocrnet_hr48.py <checkpoint 경로>
+
+### Inference Softvoting
+
+SoftVoting이 가능할 수 있도록 directory에 (819,11,512,512) size의 numpy array를 저장할 수 있습니다.
+
+    $ python inference_soft.py ./configs/ocrnet_hr48/ocrnet_hr48_soft.py <checkpoint 경로>
+
+### Baseline Code
+
+#### Dataset
 
 dataset.py를 보시면,
 
@@ -47,13 +57,7 @@ test_pipeline = [
 
 samples_per_gpu를 통해 batch_size를 조절할 수 있습니다.
 
-#### Dataset_small
-
-제대로 돌아가고 있는 지 확인할 수 있는 dataset_small.py 코드도 활용할 수 있습니다. 자세한 사항은 
-https://www.notion.so/6708af81f31a47c08833ccb06af293c7?v=7963ba00a3094dedae81aa8f6b03fc80&p=f1f98acae5b34869a129bdb586e3c39e 
-을 확인해주세요!
-
-### Runtime
+#### Runtime
 
 default_runtime.py의 
 
@@ -72,7 +76,7 @@ log_config = dict(
 ```
 project의 이름을 수정하여 원하시는 project 이름을 설정할 수 있습니다!
 
-### Scheduler
+#### Scheduler
 
 schedule_SGD.py에서 runtime을 수정할 수 있습니다.
 lr_config를 
@@ -85,3 +89,38 @@ lr_config = dict(
 로 하시면 scheduler 없이 실험하실 수 있습니다.
 
 추가적으로, mmsegmentation의 tools/train.py에 들어가서 argparser의 --deterministic의 default를 True, --seed의 default를 2021로 설정해주시면 seed 고정을 할 수 있습니다!
+
+## Data
+
+### EDA
+
+base로 주어진 train_all, train, 그리고 validation set의 분포를 확인을 dataset_EDA.ipynb에서 할 수 있습니다.
+
+### Configuration
+
+redist와 dataset_mmseg 파일을 통해 기존의 dataset을 mmsegmentation이 실행 가능하게 설정할 수 있습니다.
+
+### Loss Weight
+
+Loss의 class weight에 활용할 weight를 주어진 dataset을 통해 구하는 과정을 loss_weight.ipynb에서 확인할 수 있습니다.
+
+## Models
+
+### Focal Loss
+
+Multi-class Focal Loss를 직접 구현했습니다. 
+
+### Soft Voting
+
+Softvoting을 위해 만들어진 segmentor로, .npy 파일을 저장할 수 있도록 일부 수정했습니다.
+
+각 python 파일들을 알맞은 directory에 넣은 후 아래의 command를 실행하시면 됩니다.
+
+    $ pip install -e .
+
+## Final Submission
+
+1. DPT
+2. SETR
+3. UperNet
+

@@ -7,6 +7,6 @@ lr_config = dict(
     warmup_iters=1000,
     warmup_ratio=0.1 / 10,
     min_lr=1e-6)
-runner = dict(type='EpochBasedRunner', max_epochs=50)
-checkpoint_config = dict(interval=100)
+runner = dict(type='EpochBasedRunner', max_epochs=51)
+checkpoint_config = dict(interval=10)
 evaluation = dict(interval=1, metric='mIoU',save_best='mIoU')
