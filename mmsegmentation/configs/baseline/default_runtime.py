@@ -7,7 +7,7 @@ log_config = dict(
         dict(
             type='WandbLoggerHook',
             init_kwargs=dict(
-                project='MMSegmentation'
+                project='RealFinal'
                ))
     ])
 # yapf:enable

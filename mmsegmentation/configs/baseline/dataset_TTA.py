@@ -18,8 +18,9 @@ crop_size = (512, 512)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='Resize', img_scale=(512, 512)),
-    dict(type='RandomFlip', prob=0.),
+    dict(type='Resize', img_scale=(512, 512),ratio_range=(0.5, 1.5)),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type='PhotoMetricDistortion', contrast_range = (0.8,1.2), saturation_range = (1.0,1.0)),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg']),
@@ -28,27 +29,27 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(512, 512),
-        # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],
+        img_scale=[(512,512)],
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
-            dict(type='RandomFlip', prob=0.),
+            dict(type='RandomFlip', prob=0.5),
+            dict(type='PhotoMetricDistortion', contrast_range = (0.8,1.2), saturation_range = (1.0,1.0)),
             dict(type='Normalize', **img_norm_cfg),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img']),
         ])
 ]
 data = dict(
-    samples_per_gpu=4,
+    samples_per_gpu=6,
     workers_per_gpu=2 ,
     train=dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
         reduce_zero_label=False, 
-        img_dir=data_root + "images/training",
-        ann_dir=data_root + "annotations/training",
+        img_dir=data_root + "images/train_all",
+        ann_dir=data_root + "annotations/train_all",
         pipeline=train_pipeline),
     val=dict(
         classes=classes,
