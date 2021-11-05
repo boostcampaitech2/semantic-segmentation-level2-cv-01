@@ -54,14 +54,15 @@ if __name__ == "__main__":
     )
 
     # TODO
+    # 체크포인트 경로 지정
+    model_path = '/opt/ml/segmentation/baseline_code/saved/DeepLabV3Plus_efficientnet-b5_best_model.pt'
+    dataset_path  = '/opt/ml/segmentation/input/data'
+    test_path = dataset_path + '/test.json'
+
+    # TODO
     # 저장할 json 파일 이름 지정
     pseudo_labeling_name = 'pseudo_labeling_test'
 
-    # TODO
-    # 체크포인트 경로 지정
-    model_path = '/opt/ml/segmentation/baseline_code/saved/DeepLabV3Plus_efficientnet-b5_best_model.pt'
-    dataset_path  = '../input/data'
-    test_path = dataset_path + '/test.json'
 
     # best model 불러오기
     checkpoint = torch.load(model_path, map_location=device)
@@ -250,7 +251,6 @@ if __name__ == "__main__":
         image_infos = image_infos[0]
         # 파일 경로를 변경해주세요! .png 형식으로 저장해야 합니다.  
         # 새로 나뉜 이미지를 image_id로 저장해두어서 마찬가지로 annotation도 image_id로 저장합니다. 
-        # TODO redist_pseudo 파일에서 설정한 폴더 이름으로 경로 변경
         file_dir = f"/opt/ml/segmentation/input/{pseudo_labeling_name}/annotations/training/{image_infos['id']:04}.png"
 
         masks = masks[0].numpy()
