@@ -94,7 +94,7 @@ lr_config = dict(
 
 ### EDA
 
-base로 주어진 train_all, train, 그리고 validation set의 분포를 확인을 dataset_EDA.ipynb에서 할 수 있습니다.
+base로 주어진 train_all, train, 그리고 validation set의 분포의 확인을 dataset_EDA.ipynb에서 할 수 있습니다.
 
 ### Configuration
 
